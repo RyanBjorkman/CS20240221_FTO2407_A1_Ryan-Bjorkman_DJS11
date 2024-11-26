@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -13,7 +13,13 @@ function App() {
       try {
         const response = await fetch("https://podcast-api.netlify.app/");
         const data = await response.json();
-        setShows(data); // Update state with the fetched data
+
+        // Sort shows alphabetically by title
+        const sortedData = data.sort((a, b) => a.title.localeCompare(b.title));
+
+
+        setShows(sortedData); // Update state with the fetched data
+        
       } catch (error) {
         console.error("Error fetching shows:", error);
       } finally {
