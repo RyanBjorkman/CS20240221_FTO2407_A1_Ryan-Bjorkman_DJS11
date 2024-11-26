@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  // State for storing fetched podcast shows and loading status
+  const [shows, setShows] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch data from the API when the component loads
+  useEffect(() => {
+    async function fetchShows() {
+      setLoading(true);
+      try {
+        const response = await fetch("https://podcast-api.netlify.app/");
+        const data = await response.json();
+        setShows(data); // Update state with the fetched data
+      } catch (error) {
+        console.error("Error fetching shows:", error);
+      } finally {
+        setLoading(false); // Ensure loading state is cleared
+      }
+    }
+    fetchShows();
+  }, []);
+
+  // Display a loading message while data is being fetched
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
+
+  // Render the list of podcast shows once the data is fetched
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>Podcast Shows</h1>
+      <ul>
+        {shows.map((show) => (
+          <li key={show.id}>
+            <h2>{show.title}</h2>
+            <p>{show.description}</p>
+            <img src={show.image} alt={show.title} width="200" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default App;
