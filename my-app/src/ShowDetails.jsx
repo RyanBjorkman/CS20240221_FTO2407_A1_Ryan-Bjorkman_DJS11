@@ -5,6 +5,7 @@ function ShowDetails() {
   const { id } = useParams(); // Get the show ID from the URL
   const [show, setShow] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedSeason, setSelectedSeason] = useState(0); // Track the currently selected season
 
   useEffect(() => {
     async function fetchShowDetails() {
@@ -30,19 +31,40 @@ function ShowDetails() {
     return <h1>Show not found</h1>;
   }
 
+  const handleSeasonChange = (event) => {
+    setSelectedSeason(Number(event.target.value)); // Update the selected season index
+    };
+
   return (
     <div>
       <h1>{show.title}</h1>
       <p>{show.description}</p>
-      <ul>
-        {show.seasons.map((season, index) => (
-          <li key={index}>
-            <h2>{season.title}</h2>
-            <p>Episodes: {season.episodes.length}</p>
-            <img src={season.image} alt={season.title} width="200" />
-          </li>
-        ))}
-      </ul>
+
+        {/* Season Selector */}
+        <label htmlFor="season-select">Select a season:</label>
+        <select id="season-select" onChange={handleSeasonChange}>
+            {show.seasons.map((season, index) => (
+                <option key={index} value={index}>
+                {season.title}
+                </option>
+            ))}
+        </select>
+
+        {/* Selected Season Details */}
+        <div>
+        <h2>{show.seasons[selectedSeason].title}</h2>
+        <p>Episodes: {show.seasons[selectedSeason].episodes.length}</p>
+        <img
+          src={show.seasons[selectedSeason].image}
+          alt={show.seasons[selectedSeason].title}
+          width="200"
+        />
+        <ul>
+          {show.seasons[selectedSeason].episodes.map((episode, index) => (
+            <li key={index}>{episode.title}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
