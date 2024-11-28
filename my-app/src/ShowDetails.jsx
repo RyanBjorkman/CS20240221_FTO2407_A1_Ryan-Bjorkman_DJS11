@@ -32,8 +32,22 @@ function ShowDetails({ favorites, setFavorites }) {
 
   // Handle loading state
   if (loading) {
-    return <h1>Loading...</h1>;
-  }
+   // Return a loading indicator
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh", // Full viewport height
+      }}
+    >
+      <div className="spinner"></div>
+      <p style={{ marginTop: "10px" }}>Loading...</p>
+    </div>
+  );
+}
 
   // Handle case where the show data is not found
   if (!show) {
@@ -42,7 +56,11 @@ function ShowDetails({ favorites, setFavorites }) {
 
   // Handle season selection changes
   const handleSeasonChange = (event) => {
-    setSelectedSeason(Number(event.target.value)); // Update selected season index
+    setLoading(true); // Temporarily show the loading indicator
+    setTimeout(() => {
+      setSelectedSeason(Number(event.target.value));
+      setLoading(false); // Clear loading after updating the season
+    }, 500); // Simulate loading delay
   };
 
   // Toggle an episode as favorite or unfavorite
