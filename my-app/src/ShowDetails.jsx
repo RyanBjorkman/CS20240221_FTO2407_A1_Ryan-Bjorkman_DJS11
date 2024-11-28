@@ -32,22 +32,14 @@ function ShowDetails({ favorites, setFavorites }) {
 
   // Handle loading state
   if (loading) {
-   // Return a loading indicator
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh", // Full viewport height
-      }}
-    >
-      <div className="spinner"></div>
-      <p style={{ marginTop: "10px" }}>Loading...</p>
-    </div>
-  );
-}
+    // Return a loading indicator
+    return (
+      <div className="loader-container">
+        <div className="spinner"></div>
+        <p className="loading-text">Loading...</p>
+      </div>
+    );
+  }
 
   // Handle case where the show data is not found
   if (!show) {
@@ -56,11 +48,8 @@ function ShowDetails({ favorites, setFavorites }) {
 
   // Handle season selection changes
   const handleSeasonChange = (event) => {
-    setLoading(true); // Temporarily show the loading indicator
-    setTimeout(() => {
-      setSelectedSeason(Number(event.target.value));
-      setLoading(false); // Clear loading after updating the season
-    }, 500); // Simulate loading delay
+    // Update the selected season directly (no delay needed since data is pre-fetched)
+    setSelectedSeason(Number(event.target.value));
   };
 
   // Toggle an episode as favorite or unfavorite
@@ -87,7 +76,11 @@ function ShowDetails({ favorites, setFavorites }) {
 
       {/* Dropdown to select a season */}
       <label htmlFor="season-select">Select a Season:</label>
-      <select id="season-select" onChange={handleSeasonChange}>
+      <select
+        id="season-select"
+        onChange={handleSeasonChange} // Trigger event to change season
+      >
+        {/* Iterate through all seasons and render as options */}
         {show.seasons.map((season, seasonIndex) => (
           <option key={seasonIndex} value={seasonIndex}>
             {season.title}
