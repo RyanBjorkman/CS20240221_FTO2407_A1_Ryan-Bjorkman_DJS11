@@ -23,6 +23,14 @@ function App() {
           data.map(async (show) => {
             const detailResponse = await fetch(`https://podcast-api.netlify.app/id/${show.id}`);
             const detailedShow = await detailResponse.json();
+
+            // Format the last updated date as day-month-year
+            const lastUpdated = new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }).format(new Date(detailedShow.updatedAt)); // Format the updatedAt property
+
             return { ...show, seasons: detailedShow.seasons || [] }; // Add seasons data
           })
         );
@@ -73,6 +81,9 @@ function App() {
 
                       {/* Display the number of seasons */}
                       <p>Seasons: {show.seasons.length}</p>
+
+                      {/* Display the last updated date */}
+                      <p>Last Updated: {show.lastUpdated}</p>
 
                       {/* Display the show preview image */}
                       <img src={show.image} alt={show.title} width="200" />
