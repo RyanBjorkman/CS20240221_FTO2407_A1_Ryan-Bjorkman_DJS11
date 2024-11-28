@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types"; // Import PropTypes for validation
 
-function ShowDetails() {
+function ShowDetails({ favorites, setFavorites }) {
   const { id } = useParams(); // Get the show ID from the URL
   const [show, setShow] = useState(null); // State to store the show data
   const [loading, setLoading] = useState(true); // State to track loading status
   const [selectedSeason, setSelectedSeason] = useState(0); // State to track the selected season
-  const [favorites, setFavorites] = useState([]); // State to track favorite episodes
 
   // Fetch the show details from the API
   useEffect(() => {
@@ -73,7 +73,6 @@ function ShowDetails() {
 
       {/* Render details for the selected season */}
       <div>
-        {/* Defensive check to ensure the selected season exists */}
         {show.seasons[selectedSeason] ? (
           <>
             <h2>{show.seasons[selectedSeason].title}</h2>
@@ -83,13 +82,10 @@ function ShowDetails() {
               alt={show.seasons[selectedSeason].title}
               width="200"
             />
-
             {/* List of episodes with favorite toggle buttons */}
             <ul>
               {show.seasons[selectedSeason].episodes.map((episode) => {
-                // Generate a unique ID for each episode
                 const uniqueId = `${id}-season-${selectedSeason}-episode-${episode.episode}`;
-
                 return (
                   <li key={uniqueId}>
                     {episode.title}{" "}
@@ -122,5 +118,18 @@ function ShowDetails() {
     </div>
   );
 }
+
+// PropTypes validation
+ShowDetails.propTypes = {
+  favorites: PropTypes.arrayOf(
+    PropTypes.shape({
+      uniqueId: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string,
+      file: PropTypes.string,
+    })
+  ).isRequired,
+  setFavorites: PropTypes.func.isRequired,
+};
 
 export default ShowDetails;

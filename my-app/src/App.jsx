@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import ShowDetails from "./ShowDetails"; // Component for the detailed view
+import Favorites from "./Favorites"; // Component for the favorites view
 import "./App.css";
 
 function App() {
   // State for storing fetched podcast shows and loading status
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState([]); // Shared state for managing favorites
 
   // Fetch data from the API when the component loads
   useEffect(() => {
     async function fetchShows() {
-      setLoading(true);
+      setLoading(true); // Set loading state
       try {
         const response = await fetch("https://podcast-api.netlify.app/");
         const data = await response.json();
@@ -34,32 +36,44 @@ function App() {
     return <h1>Loading...</h1>;
   }
 
-  // Render the list of podcast shows once the data is fetched
   return (
-    <Routes>
-      {/* Home Route */}
-      <Route
-        path="/"
-        element={
-          <div>
-            <h1>Podcast Shows</h1>
-            <ul>
-              {shows.map((show) => (
-                <li key={show.id}>
-                  <Link to={`/show/${show.id}`}>
-                    <h2>{show.title}</h2>
-                    <p>{show.description}</p>
-                    <img src={show.image} alt={show.title} width="200" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        }
-      />
-      {/* Show Details Route */}
-      <Route path="/show/:id" element={<ShowDetails />} />
-    </Routes>
+    <div>
+      {/* Navigation Bar */}
+      <nav>
+        <Link to="/">Home</Link> | <Link to="/favorites">Favorites</Link>
+      </nav>
+
+      {/* Routes for different pages */}
+      <Routes>
+        {/* Home Page */}
+        <Route
+          path="/"
+          element={
+            <div>
+              <h1>Podcast Shows</h1>
+              <ul>
+                {shows.map((show) => (
+                  <li key={show.id}>
+                    <Link to={`/show/${show.id}`}>
+                      <h2>{show.title}</h2>
+                      <p>{show.description}</p>
+                      <img src={show.image} alt={show.title} width="200" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          }
+        />
+        {/* Show Details Page */}
+        <Route
+          path="/show/:id"
+          element={<ShowDetails favorites={favorites} setFavorites={setFavorites} />}
+        />
+        {/* Favorites Page */}
+        <Route path="/favorites" element={<Favorites favorites={favorites} />} />
+      </Routes>
+    </div>
   );
 }
 
