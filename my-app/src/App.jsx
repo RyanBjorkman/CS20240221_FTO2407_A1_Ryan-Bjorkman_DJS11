@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import ShowDetails from "./ShowDetails"; // Component for the detailed view
 import "./App.css";
 
 function App() {
@@ -17,9 +19,7 @@ function App() {
         // Sort shows alphabetically by title
         const sortedData = data.sort((a, b) => a.title.localeCompare(b.title));
 
-
         setShows(sortedData); // Update state with the fetched data
-        
       } catch (error) {
         console.error("Error fetching shows:", error);
       } finally {
@@ -36,18 +36,30 @@ function App() {
 
   // Render the list of podcast shows once the data is fetched
   return (
-    <div>
-      <h1>Podcast Shows</h1>
-      <ul>
-        {shows.map((show) => (
-          <li key={show.id}>
-            <h2>{show.title}</h2>
-            <p>{show.description}</p>
-            <img src={show.image} alt={show.title} width="200" />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Routes>
+      {/* Home Route */}
+      <Route
+        path="/"
+        element={
+          <div>
+            <h1>Podcast Shows</h1>
+            <ul>
+              {shows.map((show) => (
+                <li key={show.id}>
+                  <Link to={`/show/${show.id}`}>
+                    <h2>{show.title}</h2>
+                    <p>{show.description}</p>
+                    <img src={show.image} alt={show.title} width="200" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        }
+      />
+      {/* Show Details Route */}
+      <Route path="/show/:id" element={<ShowDetails />} />
+    </Routes>
   );
 }
 
