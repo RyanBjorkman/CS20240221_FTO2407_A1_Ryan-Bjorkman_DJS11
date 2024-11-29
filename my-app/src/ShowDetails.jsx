@@ -118,32 +118,40 @@ function ShowDetails({ favorites, setFavorites }) {
                 {/* Episodes List */}
                 <ul>
                     {show.seasons[selectedSeason].episodes.map((episode) => {
-                    const uniqueId = `${id}-season-${selectedSeason}-episode-${episode.episode}`;
-                    return (
-                        <li key={uniqueId} style={{ marginBottom: "10px" }}>
-                        <strong>{episode.title}</strong>{" "}
-                        <button
+                        const uniqueId = `${id}-season-${selectedSeason}-episode-${episode.episode}`;
+                        return (
+                        <li key={uniqueId} style={{ marginBottom: "20px" }}>
+                            <strong>{episode.title}</strong>
+                            <div style={{ margin: "10px 0" }}>
+                            {/* Audio Player for the Episode */}
+                            <audio controls style={{ width: "100%" }}>
+                                <source src={episode.file} type="audio/mpeg" />
+                                Your browser does not support the audio element.
+                            </audio>
+                            </div>
+                            <button
                             onClick={() => toggleFavorite({ ...episode, uniqueId })}
                             style={{
-                            marginLeft: "10px",
-                            padding: "5px 10px",
-                            backgroundColor: favorites.some((fav) => fav.uniqueId === uniqueId)
+                                marginTop: "5px",
+                                padding: "5px 10px",
+                                backgroundColor: favorites.some((fav) => fav.uniqueId === uniqueId)
                                 ? "#dc3545"
                                 : "#007BFF",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "3px",
-                            cursor: "pointer",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "3px",
+                                cursor: "pointer",
                             }}
-                        >
+                            >
                             {favorites.some((fav) => fav.uniqueId === uniqueId)
-                            ? "Unmark Favorite"
-                            : "Mark as Favorite"}
-                        </button>
+                                ? "Unmark Favorite"
+                                : "Mark as Favorite"}
+                            </button>
                         </li>
-                    );
+                        );
                     })}
                 </ul>
+
                 </>
             ) : (
                 <p>No episodes available for this season.</p>
