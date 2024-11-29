@@ -13,6 +13,9 @@ function App() {
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
   const [currentAudio, setCurrentAudio] = useState(null); // Track the currently playing audio
+  const [currentTime, setCurrentTime] = useState(0); // Track current playback time
+const [duration, setDuration] = useState(0); // Track total duration of the audio
+  
 
   // Sync favorites with localStorage whenever it changes
   useEffect(() => {
@@ -179,15 +182,43 @@ const sortedShows = [...filteredShows].sort((a, b) => {
           }}
         >
           <h4>Now Playing: {currentAudio.title}</h4>
-          <audio
-            controls
-            id="audio-player"
-            autoPlay
-            onLoadedData={(e) => e.target.play()} // Start playback when audio data is loaded
-          >
-            <source src={currentAudio.file} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
+          {/* Persistent Audio Player */}
+            <audio
+              controls
+              id="audio-player"
+              autoPlay
+              onLoadedData={(e) => {
+                setDuration(e.target.duration); // Set total duration when audio is loaded
+                e.target.play(); // Start playback
+              }}
+              onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)} // Update current time as audio plays
+            >
+              <source src={currentAudio.file} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+
+            {/* Progress Bar */}
+            <div style={{ marginTop: "10px" }}>
+              <input
+                type="range"
+                min="0"
+                max={duration}
+                value={currentTime}
+                onChange={(e) => {
+                  const audioElement = document.getElementById("audio-player");
+                  if (audioElement) {
+                    audioElement.currentTime = e.target.value; // Update playback position
+                    setCurrentTime(e.target.value);
+                  }
+                }}
+                style={{ width: "100%" }}
+              />
+              <p>
+                {/* Format the time to HH:mm:ss */}
+                {new Date(currentTime * 1000).toISOString().substr(11, 8)} /{" "}
+                {new Date(duration * 1000).toISOString().substr(11, 8)}
+              </p>
+            </div>
         </div>
       )} 
     </div>
