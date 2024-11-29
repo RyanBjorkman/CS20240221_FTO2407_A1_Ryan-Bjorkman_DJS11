@@ -76,22 +76,23 @@ function ShowDetails({ favorites, setFavorites }) {
       <h1>{show.title}</h1>
       <p>{show.description}</p>
 
-    {/* Toggle buttons for selecting a season */}
-        <div>
-        <h3>Select a Season:</h3>
+    {/* Season Toggle Buttons */}
+        <div style={{ marginBottom: "20px" }}>
+        <h3>Choose a Season:</h3>
         <div>
             {show.seasons.map((season, index) => (
             <button
                 key={index}
-                onClick={() => setSelectedSeason(index)} // Update the selected season index
+                onClick={() => setSelectedSeason(index)} // Update selected season
                 style={{
                 margin: "5px",
                 padding: "10px",
-                backgroundColor: selectedSeason === index ? "#007BFF" : "#e0e0e0",
-                color: selectedSeason === index ? "#fff" : "#000",
-                border: "none",
+                backgroundColor: selectedSeason === index ? "#007BFF" : "#f8f9fa",
+                color: selectedSeason === index ? "#fff" : "#343a40",
+                border: "1px solid #007BFF",
                 borderRadius: "5px",
                 cursor: "pointer",
+                transition: "background-color 0.3s",
                 }}
             >
                 {season.title}
@@ -101,41 +102,54 @@ function ShowDetails({ favorites, setFavorites }) {
         </div>
 
 
-      {/* Render details for the selected season */}
-      <div>
-        {show.seasons[selectedSeason] ? (
-          <>
-            <h2>{show.seasons[selectedSeason].title}</h2>
-            <p>Episodes: {show.seasons[selectedSeason].episodes.length}</p>
-            <img
-              src={show.seasons[selectedSeason].image}
-              alt={show.seasons[selectedSeason].title}
-              width="200"
-            />
 
-            {/* List of episodes with favorite toggle buttons */}
-            <ul>
-              {show.seasons[selectedSeason].episodes.map((episode) => {
-                // Generate a unique ID for each episode
-                const uniqueId = `${id}-season-${selectedSeason}-episode-${episode.episode}`;
+            {/* Render Selected Season Details */}
+            <div style={{ marginTop: "20px" }}>
+            {show.seasons[selectedSeason] ? (
+                <>
+                <h2>{show.seasons[selectedSeason].title}</h2>
+                <p>Episodes: {show.seasons[selectedSeason].episodes.length}</p>
+                <img
+                    src={show.seasons[selectedSeason].image}
+                    alt={show.seasons[selectedSeason].title}
+                    width="300"
+                    style={{ borderRadius: "10px", marginBottom: "15px" }}
+                />
+                {/* Episodes List */}
+                <ul>
+                    {show.seasons[selectedSeason].episodes.map((episode) => {
+                    const uniqueId = `${id}-season-${selectedSeason}-episode-${episode.episode}`;
+                    return (
+                        <li key={uniqueId} style={{ marginBottom: "10px" }}>
+                        <strong>{episode.title}</strong>{" "}
+                        <button
+                            onClick={() => toggleFavorite({ ...episode, uniqueId })}
+                            style={{
+                            marginLeft: "10px",
+                            padding: "5px 10px",
+                            backgroundColor: favorites.some((fav) => fav.uniqueId === uniqueId)
+                                ? "#dc3545"
+                                : "#007BFF",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "3px",
+                            cursor: "pointer",
+                            }}
+                        >
+                            {favorites.some((fav) => fav.uniqueId === uniqueId)
+                            ? "Unmark Favorite"
+                            : "Mark as Favorite"}
+                        </button>
+                        </li>
+                    );
+                    })}
+                </ul>
+                </>
+            ) : (
+                <p>No episodes available for this season.</p>
+            )}
+            </div>
 
-                return (
-                  <li key={uniqueId}>
-                    {episode.title}{" "}
-                    <button onClick={() => toggleFavorite({ ...episode, uniqueId })}>
-                      {favorites.some((fav) => fav.uniqueId === uniqueId)
-                        ? "Unmark Favorite"
-                        : "Mark as Favorite"}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        ) : (
-          <p>No episodes available for this season.</p>
-        )}
-      </div>
 
       {/* List of favorited episodes */}
       {favorites.length > 0 && (
