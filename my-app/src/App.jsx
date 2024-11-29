@@ -90,6 +90,24 @@ const sortedShows = [...filteredShows].sort((a, b) => {
     <div>
       <nav>
         <Link to="/">Home</Link> | <Link to="/favorites">Favorites</Link>
+        {/* Reset favorites button */}
+        <button
+          onClick={() => {
+            setFavorites([]); // Clear favorites state
+            localStorage.removeItem("favorites"); // Remove favorites from localStorage
+          }}
+          style={{
+            marginLeft: "10px",
+            padding: "5px 10px",
+            backgroundColor: "#ff4d4f",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Reset Favorites
+        </button>
       </nav>
 
       <Routes>
