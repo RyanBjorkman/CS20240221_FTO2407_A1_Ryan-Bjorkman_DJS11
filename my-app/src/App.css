@@ -96,3 +96,56 @@
   }
 }
 
+/* Persistent Audio Player Styles */
+.audio-player-container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #007BFF, #0056b3);
+  color: white;
+  padding: 15px 10px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.audio-player-title {
+  font-size: 16px;
+  font-weight: bold;
+  flex: 1 0 100%;
+  margin-bottom: 10px;
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.audio-progress-bar {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.audio-progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.audio-timing {
+  font-size: 14px;
+}

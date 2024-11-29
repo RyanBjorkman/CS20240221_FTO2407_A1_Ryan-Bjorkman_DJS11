@@ -171,56 +171,47 @@ const sortedShows = [...filteredShows].sort((a, b) => {
       </Routes>
       {/* Persist audio player */}
       {currentAudio && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: 0,
-            width: "100%",
-            backgroundColor: "#f1f1f1",
-            padding: "10px",
-            boxShadow: "0 -2px 5px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <h4>Now Playing: {currentAudio.title}</h4>
-          {/* Persistent Audio Player */}
-            <audio
-              controls
-              id="audio-player"
-              autoPlay
-              onLoadedData={(e) => {
-                setDuration(e.target.duration); // Set total duration when audio is loaded
-                e.target.play(); // Start playback
-              }}
-              onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)} // Update current time as audio plays
-            >
-              <source src={currentAudio.file} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
+  <div className="audio-player-container">
+    <h4 className="audio-player-title">Now Playing: {currentAudio.title}</h4>
+    <div className="audio-controls">
+      {/* Audio Element */}
+      <audio
+        controls
+        id="audio-player"
+        autoPlay
+        onLoadedData={(e) => {
+          setDuration(e.target.duration);
+          e.target.play();
+        }}
+        onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
+        style={{ display: "none" }} // Hide default audio controls
+      >
+        <source src={currentAudio.file} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
 
-            {/* Progress Bar */}
-            <div style={{ marginTop: "10px" }}>
-              <input
-                type="range"
-                min="0"
-                max={duration}
-                value={currentTime}
-                onChange={(e) => {
-                  const audioElement = document.getElementById("audio-player");
-                  if (audioElement) {
-                    audioElement.currentTime = e.target.value; // Update playback position
-                    setCurrentTime(e.target.value);
-                  }
-                }}
-                style={{ width: "100%" }}
-              />
-              <p>
-                {/* Format the time to HH:mm:ss */}
-                {new Date(currentTime * 1000).toISOString().substr(11, 8)} /{" "}
-                {new Date(duration * 1000).toISOString().substr(11, 8)}
-              </p>
-            </div>
-        </div>
-      )} 
+      {/* Custom Progress Bar */}
+      <input
+        type="range"
+        className="audio-progress-bar"
+        min="0"
+        max={duration}
+        value={currentTime}
+        onChange={(e) => {
+          const audioElement = document.getElementById("audio-player");
+          if (audioElement) {
+            audioElement.currentTime = e.target.value;
+            setCurrentTime(e.target.value);
+          }
+        }}
+      />
+      <p className="audio-timing">
+        {new Date(currentTime * 1000).toISOString().substr(11, 8)} /{" "}
+        {new Date(duration * 1000).toISOString().substr(11, 8)}
+      </p>
+    </div>
+  </div>
+)}
     </div>
   );
 }
