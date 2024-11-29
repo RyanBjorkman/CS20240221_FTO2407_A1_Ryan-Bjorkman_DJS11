@@ -9,7 +9,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]); // Shared state for managing favorites
   const [selectedGenre, setSelectedGenre] = useState(""); // Track the selected genre
-  const [sortOrder, setSortOrder] = useState("asc"); // Default sorting: A-Z
+  const [sortCriteria, setSortCriteria] = useState("title-asc"); // Default: A-Z by title
 
   useEffect(() => {
     async function fetchShows() {
@@ -57,13 +57,20 @@ function App() {
     ? shows.filter((show) => show.genres && show.genres.includes(selectedGenre))
     : shows;
 
-  const sortedShows = [...filteredShows].sort((a, b) => {
-    if (sortOrder === "asc") {
-      return a.title.localeCompare(b.title); // Ascending (A-Z)
-    } else {
-      return b.title.localeCompare(a.title); // Descending (Z-A)
-    }
-  });
+  // Sorting logic based on sortCriteria
+const sortedShows = [...filteredShows].sort((a, b) => {
+  if (sortCriteria === "title-asc") {
+    return a.title.localeCompare(b.title); // Ascending (A-Z)
+  } else if (sortCriteria === "title-desc") {
+    return b.title.localeCompare(a.title); // Descending (Z-A)
+  } else if (sortCriteria === "updated-recent") {
+    return new Date(b.lastUpdated) - new Date(a.lastUpdated); // Most recently updated
+  } else if (sortCriteria === "updated-oldest") {
+    return new Date(a.lastUpdated) - new Date(b.lastUpdated); // Oldest updated first
+  }
+  return 0;
+});
+
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -103,8 +110,10 @@ function App() {
 
               {/* Sorting Buttons */}
               <div style={{ marginTop: "10px" }}>
-                <button onClick={() => setSortOrder("asc")}>Sort A-Z</button>
-                <button onClick={() => setSortOrder("desc")}>Sort Z-A</button>
+                <button onClick={() => setSortCriteria("title-asc")}>Sort A-Z</button>
+                <button onClick={() => setSortCriteria("title-desc")}>Sort Z-A</button>
+                <button onClick={() => setSortCriteria("updated-recent")}>Most Recently Updated</button>
+                <button onClick={() => setSortCriteria("updated-oldest")}>Oldest Updated</button>
               </div>
 
               {/* Display Shows */}
