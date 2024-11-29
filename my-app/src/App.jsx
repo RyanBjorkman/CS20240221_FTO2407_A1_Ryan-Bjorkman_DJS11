@@ -9,8 +9,6 @@ function App() {
   const [shows, setShows] = useState([]);
   // State to manage loading status while fetching data
   const [loading, setLoading] = useState(true);
-  // State to track errors during data fetching
-  const [error, setError] = useState(null);
   // State to store user's favorite episodes, initialized from localStorage
   const [favorites, setFavorites] = useState(() => {
     const savedFavorites = localStorage.getItem("favorites");
@@ -39,7 +37,7 @@ function App() {
       try {
         const response = await fetch("https://podcast-api.netlify.app/");
         if (!response.ok) {
-          trow new Error('HTTP Error: ${response.status}'); // Handle HTTP errors
+          throw new Error(`HTTP Error: ${response.status}`); // Handle HTTP errors
         }
         const data = await response.json();
 
@@ -71,7 +69,6 @@ function App() {
         setShows(detailedData); // Update state with detailed data
       } catch (err) {
         console.error("Error fetching shows:", err);
-        setError(err); // Set error state if an error occurs
       } finally {
         setLoading(false); // Clear loading state
       }
