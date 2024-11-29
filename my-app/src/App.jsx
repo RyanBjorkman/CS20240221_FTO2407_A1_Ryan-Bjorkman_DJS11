@@ -5,15 +5,12 @@ import Favorites from "./Favorites"; // Component for the favorites view
 import "./App.css";
 
 function App() {
-  // State for storing fetched podcast shows and loading status
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]); // Shared state for managing favorites
-
-  // State to track sorting order
+  const [selectedGenre, setSelectedGenre] = useState(""); // Track the selected genre
   const [sortOrder, setSortOrder] = useState("asc"); // Default sorting: A-Z
 
-  // Fetch data from the API when the component loads
   useEffect(() => {
     async function fetchShows() {
       setLoading(true); // Set loading state
@@ -21,26 +18,26 @@ function App() {
         const response = await fetch("https://podcast-api.netlify.app/");
         const data = await response.json();
 
-        // Fetch detailed data for each show
         const detailedData = await Promise.all(
           data.map(async (show) => {
             const detailResponse = await fetch(`https://podcast-api.netlify.app/id/${show.id}`);
             const detailedShow = await detailResponse.json();
 
-            // Format the last updated date using the correct field
+            const genres = detailedShow.genres || []; // Use genres as provided by the detailed API
+
             const lastUpdated = detailedShow.updated
               ? new Intl.DateTimeFormat("en-GB", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
                 }).format(new Date(detailedShow.updated))
-              : "No date available"; // Fallback if updated is missing
+              : "Unknown";
 
-            // Return the show with all relevant data
             return {
-              ...show, // Include the original show data
-              seasons: detailedShow.seasons || [], // Add seasons data
-              lastUpdated, // Add the formatted last updated date
+              ...show,
+              seasons: detailedShow.seasons || [],
+              lastUpdated,
+              genres, // Include genre titles
             };
           })
         );
@@ -55,8 +52,12 @@ function App() {
     fetchShows();
   }, []);
 
-  // Sorting logic based on sortOrder
-  const sortedShows = [...shows].sort((a, b) => {
+  // Filter and Sort Shows
+  const filteredShows = selectedGenre
+    ? shows.filter((show) => show.genres && show.genres.includes(selectedGenre))
+    : shows;
+
+  const sortedShows = [...filteredShows].sort((a, b) => {
     if (sortOrder === "asc") {
       return a.title.localeCompare(b.title); // Ascending (A-Z)
     } else {
@@ -64,50 +65,58 @@ function App() {
     }
   });
 
-  // Display a loading message while data is being fetched
   if (loading) {
     return <h1>Loading...</h1>;
   }
 
   return (
     <div>
-      {/* Navigation Bar */}
       <nav>
         <Link to="/">Home</Link> | <Link to="/favorites">Favorites</Link>
       </nav>
 
-      {/* Routes for different pages */}
       <Routes>
-        {/* Home Page */}
         <Route
           path="/"
           element={
             <div>
               <h1>Podcast Shows</h1>
 
+              {/* Filter and Sorting Controls */}
+                <div>
+                  {/* Genre Filter Buttons */}
+                  {[...new Set(shows.flatMap((show) => show.genres || []))]
+                    .filter((genre, index, self) => genre && self.indexOf(genre) === index) // Ensure no duplicates
+                    .map((genre) => (
+                      <button
+                        key={genre}
+                        onClick={() => setSelectedGenre(genre)}
+                        style={{
+                          fontWeight: selectedGenre === genre ? "bold" : "normal",
+                        }}
+                      >
+                        {genre}
+                      </button>
+                    ))}
+                </div>
+
+
               {/* Sorting Buttons */}
-              <div>
+              <div style={{ marginTop: "10px" }}>
                 <button onClick={() => setSortOrder("asc")}>Sort A-Z</button>
                 <button onClick={() => setSortOrder("desc")}>Sort Z-A</button>
               </div>
 
+              {/* Display Shows */}
               <ul>
                 {sortedShows.map((show) => (
                   <li key={show.id}>
                     <Link to={`/show/${show.id}`}>
-                      {/* Display the show title */}
                       <h2>{show.title}</h2>
-
-                      {/* Display the show description */}
                       <p>{show.description}</p>
-
-                      {/* Display the number of seasons */}
+                      <p>Genres: {show.genres.join(", ")}</p>
                       <p>Seasons: {show.seasons.length}</p>
-
-                      {/* Display the last updated date */}
                       <p>Last Updated: {show.lastUpdated}</p>
-
-                      {/* Display the show preview image */}
                       <img src={show.image} alt={show.title} width="200" />
                     </Link>
                   </li>
@@ -116,12 +125,7 @@ function App() {
             </div>
           }
         />
-        {/* Show Details Page */}
-        <Route
-          path="/show/:id"
-          element={<ShowDetails favorites={favorites} setFavorites={setFavorites} />}
-        />
-        {/* Favorites Page */}
+        <Route path="/show/:id" element={<ShowDetails favorites={favorites} setFavorites={setFavorites} />} />
         <Route path="/favorites" element={<Favorites favorites={favorites} />} />
       </Routes>
     </div>
