@@ -12,6 +12,7 @@ function App() {
     const savedFavorites = localStorage.getItem("favorites");
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
+  const [currentAudio, setCurrentAudio] = useState(null); // Track the currently playing audio
 
   // Sync favorites with localStorage whenever it changes
   useEffect(() => {
@@ -162,11 +163,36 @@ const sortedShows = [...filteredShows].sort((a, b) => {
             </div>
           }
         />
-        <Route path="/show/:id" element={<ShowDetails favorites={favorites} setFavorites={setFavorites} />} />
-        <Route path="/favorites" element={<Favorites favorites={favorites} />} />
+        <Route path="/show/:id" element={<ShowDetails favorites={favorites} setFavorites={setFavorites} setCurrentAudio={setCurrentAudio} />} />
+        <Route path="/favorites" element={<Favorites favorites={favorites} setCurrentAudio={setCurrentAudio} />} />
       </Routes>
+      {/* Persist audio player */}
+      {currentAudio && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 0,
+            width: "100%",
+            backgroundColor: "#f1f1f1",
+            padding: "10px",
+            boxShadow: "0 -2px 5px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <h4>Now Playing: {currentAudio.title}</h4>
+          <audio
+            controls
+            id="audio-player"
+            autoPlay
+            onLoadedData={(e) => e.target.play()} // Start playback when audio data is loaded
+          >
+            <source src={currentAudio.file} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      )} 
     </div>
   );
 }
+
 
 export default App;

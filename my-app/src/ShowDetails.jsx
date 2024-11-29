@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types"; // Import PropTypes for validation
 
-function ShowDetails({ favorites, setFavorites }) {
+function ShowDetails({ favorites, setFavorites, setCurrentAudio }) {
   const { id } = useParams(); // Extract the show ID from the URL
   const [show, setShow] = useState(null); // State to store the show data
   const [loading, setLoading] = useState(true); // State to track loading status
@@ -146,6 +146,20 @@ function ShowDetails({ favorites, setFavorites }) {
                                 ? "Unmark Favorite"
                                 : "Mark as Favorite"}
                             </button>
+                            <button
+                                onClick={() => setCurrentAudio({ ...episode, title: `${show.title} - ${episode.title}` })}
+                                style={{
+                                    marginTop: "5px",
+                                    padding: "5px 10px",
+                                    backgroundColor: "#007BFF",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "3px",
+                                    cursor: "pointer",
+                                }}
+                                >
+                                Play Episode
+                            </button>
                         </li>
                         );
                     })}
@@ -192,6 +206,7 @@ ShowDetails.propTypes = {
     })
   ).isRequired,
   setFavorites: PropTypes.func.isRequired, // Function to update favorites
+  setCurrentAudio: PropTypes.func.isRequired, // Function to set current audio
 };
 
 export default ShowDetails;
