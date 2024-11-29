@@ -10,6 +10,9 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState([]); // Shared state for managing favorites
 
+  // State to track sorting order
+  const [sortOrder, setSortOrder] = useState("asc"); // Default sorting: A-Z
+
   // Fetch data from the API when the component loads
   useEffect(() => {
     async function fetchShows() {
@@ -17,13 +20,13 @@ function App() {
       try {
         const response = await fetch("https://podcast-api.netlify.app/");
         const data = await response.json();
-  
+
         // Fetch detailed data for each show
         const detailedData = await Promise.all(
           data.map(async (show) => {
             const detailResponse = await fetch(`https://podcast-api.netlify.app/id/${show.id}`);
             const detailedShow = await detailResponse.json();
-  
+
             // Format the last updated date using the correct field
             const lastUpdated = detailedShow.updated
               ? new Intl.DateTimeFormat("en-GB", {
@@ -32,7 +35,7 @@ function App() {
                   year: "numeric",
                 }).format(new Date(detailedShow.updated))
               : "No date available"; // Fallback if updated is missing
-  
+
             // Return the show with all relevant data
             return {
               ...show, // Include the original show data
@@ -41,11 +44,8 @@ function App() {
             };
           })
         );
-  
-        // Sort shows alphabetically by title
-        const sortedData = detailedData.sort((a, b) => a.title.localeCompare(b.title));
-  
-        setShows(sortedData); // Update state with detailed data
+
+        setShows(detailedData); // Update state with detailed data
       } catch (error) {
         console.error("Error fetching shows:", error);
       } finally {
@@ -54,8 +54,15 @@ function App() {
     }
     fetchShows();
   }, []);
-  
-  
+
+  // Sorting logic based on sortOrder
+  const sortedShows = [...shows].sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a.title.localeCompare(b.title); // Ascending (A-Z)
+    } else {
+      return b.title.localeCompare(a.title); // Descending (Z-A)
+    }
+  });
 
   // Display a loading message while data is being fetched
   if (loading) {
@@ -77,11 +84,18 @@ function App() {
           element={
             <div>
               <h1>Podcast Shows</h1>
+
+              {/* Sorting Buttons */}
+              <div>
+                <button onClick={() => setSortOrder("asc")}>Sort A-Z</button>
+                <button onClick={() => setSortOrder("desc")}>Sort Z-A</button>
+              </div>
+
               <ul>
-                {shows.map((show) => (
+                {sortedShows.map((show) => (
                   <li key={show.id}>
                     <Link to={`/show/${show.id}`}>
-                    {/* Display the show title */}
+                      {/* Display the show title */}
                       <h2>{show.title}</h2>
 
                       {/* Display the show description */}
