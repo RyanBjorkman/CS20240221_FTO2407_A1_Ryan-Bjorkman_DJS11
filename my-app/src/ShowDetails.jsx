@@ -32,25 +32,27 @@ function ShowDetails({ favorites, setFavorites }) {
 
   // Handle loading state
   if (loading) {
-    // Return a loading indicator
-    return (
-      <div className="loader-container">
-        <div className="spinner"></div>
-        <p className="loading-text">Loading...</p>
-      </div>
-    );
-  }
+   // Return a loading indicator
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh", // Full viewport height
+      }}
+    >
+      <div className="spinner"></div>
+      <p style={{ marginTop: "10px" }}>Loading...</p>
+    </div>
+  );
+}
 
   // Handle case where the show data is not found
   if (!show) {
     return <h1>Show not found</h1>;
   }
-
-  // Handle season selection changes
-  const handleSeasonChange = (event) => {
-    // Update the selected season directly (no delay needed since data is pre-fetched)
-    setSelectedSeason(Number(event.target.value));
-  };
 
   // Toggle an episode as favorite or unfavorite
   const toggleFavorite = (episode) => {
@@ -74,19 +76,30 @@ function ShowDetails({ favorites, setFavorites }) {
       <h1>{show.title}</h1>
       <p>{show.description}</p>
 
-      {/* Dropdown to select a season */}
-      <label htmlFor="season-select">Select a Season:</label>
-      <select
-        id="season-select"
-        onChange={handleSeasonChange} // Trigger event to change season
-      >
-        {/* Iterate through all seasons and render as options */}
-        {show.seasons.map((season, seasonIndex) => (
-          <option key={seasonIndex} value={seasonIndex}>
-            {season.title}
-          </option>
-        ))}
-      </select>
+    {/* Toggle buttons for selecting a season */}
+        <div>
+        <h3>Select a Season:</h3>
+        <div>
+            {show.seasons.map((season, index) => (
+            <button
+                key={index}
+                onClick={() => setSelectedSeason(index)} // Update the selected season index
+                style={{
+                margin: "5px",
+                padding: "10px",
+                backgroundColor: selectedSeason === index ? "#007BFF" : "#e0e0e0",
+                color: selectedSeason === index ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                }}
+            >
+                {season.title}
+            </button>
+            ))}
+        </div>
+        </div>
+
 
       {/* Render details for the selected season */}
       <div>
