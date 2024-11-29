@@ -24,6 +24,13 @@ function Favorites({ favorites, setCurrentAudio }) {
             <button
               onClick={() => {
                 setCurrentAudio(favorite); // Update the currently playing episode
+
+                // Trigger playback once the audio player updates
+                const audioElement = document.getElementById("audio-player"); // Select the audio player by its ID
+                if (audioElement) {
+                  audioElement.load(); // Reload the updated audio source
+                  audioElement.play(); // Start playback
+                }
               }}
             >
               Play Episode
