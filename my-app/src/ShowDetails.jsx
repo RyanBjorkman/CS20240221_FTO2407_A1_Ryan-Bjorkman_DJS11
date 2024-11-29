@@ -57,16 +57,15 @@ function ShowDetails({ favorites, setFavorites }) {
   // Toggle an episode as favorite or unfavorite
   const toggleFavorite = (episode) => {
     setFavorites((prevFavorites) => {
-      // Check if the episode is already in favorites
+        // Check if the episode is already in favorites
       const isFavorite = prevFavorites.some((fav) => fav.uniqueId === episode.uniqueId);
-
-      if (isFavorite) {
-        // Remove the episode from favorites
-        return prevFavorites.filter((fav) => fav.uniqueId !== episode.uniqueId);
-      } else {
-        // Add the episode to favorites and include the show ID
-        return [...prevFavorites, { ...episode, id }];
-      }
+      const updatedFavorites = isFavorite
+        ? prevFavorites.filter((fav) => fav.uniqueId !== episode.uniqueId) // Remove the episode from favorites
+        : [...prevFavorites, { ...episode, id }]; // Add the episode to favorites
+  
+      // Save the updated favorites to localStorage
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      return updatedFavorites;
     });
   };
 

@@ -7,7 +7,17 @@ import "./App.css";
 function App() {
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]); // Shared state for managing favorites
+ // Initialize favorites with localStorage data if available
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem("favorites");
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
+
+  // Sync favorites with localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
   const [selectedGenre, setSelectedGenre] = useState(""); // Track the selected genre
   const [sortCriteria, setSortCriteria] = useState("title-asc"); // Default: A-Z by title
 
