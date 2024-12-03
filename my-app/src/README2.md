@@ -32,3 +32,9 @@ Routing:
 State Management:
 useState: Manages states for podcasts, favorites, audio playback, genre filtering, and sorting.
 useEffect: Handles API data fetching and local storage synchronization.
+
+
+Contact info
+Ryan Bjorkman 
+Tel: 0813019676
+Email: ryanbjorkman@icloud.com
